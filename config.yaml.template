@@ -6,3 +6,7 @@ napt_entries:
     wan_port: 1234
     lan_ipv4_ddress: 192.168.1.23
     lan_port: 1234
+  - target_protocol: 17
+    wan_port: 12345
+    lan_ipv4_ddress: 192.168.1.23
+    lan_port: 12345
