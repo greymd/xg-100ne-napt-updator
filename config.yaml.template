@@ -2,8 +2,7 @@ gateway_ip: 192.168.1.1
 username: 'MyUserName'
 password: 'MyPassword'
 napt_entries:
-  - protocol_number: 6 # 6 = TCP, 17 = UDP
-    public_port: 1234
-    local_ip: 192.168.1.23
-    local_port: 1234
-
+  - target_protocol: 6 # 6 = TCP, 17 = UDP
+    wan_port: 1234
+    lan_ipv4_ddress: 192.168.1.23
+    lan_port: 1234

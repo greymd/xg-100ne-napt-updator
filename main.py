@@ -2,7 +2,6 @@ import requests
 import json
 import base64
 import yaml
-import os
 
 def load_config(config_file='config.yaml'):
     with open(config_file, 'r') as file:
@@ -23,19 +22,25 @@ def get_token(base_url, auth_header):
 
     return token
 
-def add_static_napt_entry(base_url, auth_header, token, protocol_number, public_port, local_ip, local_port):
+def add_static_napt_entries(base_url, auth_header, token, entries):
     url = f"{base_url}/setting"
     payload = {
         'action': 'setStaticNaptEntry',
-        'token': token,
-        'staticNaptEntry1': f"{protocol_number},{public_port},{local_ip},{local_port},false"
+        'token': token
     }
+
+    for index, entry in enumerate(entries, start=1):
+        delete_flag = 'false'
+        if 'delete_flag' in entry:
+            delete_flag = entry['delete_flag']
+        payload[f"staticNaptEntry{index}"] = f"{entry['target_protocol']},{entry['wan_port']},{entry['lan_ipv4_ddress']},{entry['lan_port']},{delete_flag}"
+
     headers = {'Authorization': auth_header}
 
     response = requests.post(url, headers=headers, data=payload)
     response.raise_for_status()
 
-    print("Static IP masquerade entry added successfully.")
+    print("Static IP masquerade entries added successfully.")
 
 def main():
     config = load_config()
@@ -46,25 +51,14 @@ def main():
     base_url = f"http://{gateway_ip}:8888/fj/jp.co.softbank.softbank_hikari/softbank_hikari"
     credentials = f"{username}:{password}"
     auth_header = f"Basic {base64.b64encode(credentials.encode()).decode()}"
+
     try:
         print("Getting token...")
         token = get_token(base_url, auth_header)
         print(f"Token received: {token}")
-        for entry in entries:
-            entry['protocol_number']
-            entry['public_port']
-            entry['local_ip']
-            entry['local_port']
-            print("Adding static NAPT entry...")
-            add_static_napt_entry(
-                    base_url,
-                    auth_header,
-                    token,
-                    entry['protocol_number'],
-                    entry['public_port'],
-                    entry['local_ip'],
-                    entry['local_port']
-                    )
+
+        print("Adding static NAPT entries...")
+        add_static_napt_entries(base_url, auth_header, token, entries)
     except requests.HTTPError as http_err:
         print(f"HTTP error occurred: {http_err}")
     except Exception as err:
