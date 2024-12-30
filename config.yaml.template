@@ -1,0 +1,9 @@
+gateway_ip: 192.168.1.1
+username: 'MyUserName'
+password: 'MyPassword'
+napt_entries:
+  - protocol_number: 6 # 6 = TCP, 17 = UDP
+    public_port: 1234
+    local_ip: 192.168.1.23
+    local_port: 1234
+
